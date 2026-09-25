@@ -4,7 +4,8 @@ services:
     ports:
       - "9000:9000"
     environment:
-      ARCA_PUBLIC_URL: http://localhost:9000
+      ARCA_PUBLIC_URL: ${ARCA_PUBLIC_URL:-http://localhost:9000}
+      ARCA_REGION: ${ARCA_REGION:-us-east-1}
     volumes:
       - arca-data:/data
 
