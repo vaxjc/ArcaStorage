@@ -1,0 +1,14 @@
+services:
+  storage:
+    build: .
+    ports:
+      - "9000:9000"
+    environment:
+      STORAGE_PUBLIC_URL: http://localhost:9000
+      STORAGE_ACCESS_KEY: ${STORAGE_ACCESS_KEY:-local-access-key}
+      STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY:-local-secret-key}
+    volumes:
+      - storage-data:/data
+
+volumes:
+  storage-data:
