@@ -15,13 +15,13 @@ import (
 	"strings"
 	"time"
 
-	"storage/internal/auth"
-	"storage/internal/store"
+	"arca/internal/auth"
+	"arca/internal/store"
 )
 
 const (
-	ownerID   = "storage"
-	ownerName = "storage"
+	ownerID   = "arca"
+	ownerName = "arca"
 	xmlNS     = "http://s3.amazonaws.com/doc/2006-03-01/"
 )
 
@@ -60,7 +60,7 @@ func (s *Server) Handler() http.Handler {
 func (s *Server) serve(w http.ResponseWriter, r *http.Request) {
 	start := s.Now()
 	rid := newID()
-	w.Header().Set("Server", "storage")
+	w.Header().Set("Server", "arca")
 	w.Header().Set("x-amz-request-id", rid)
 	sw := &statusWriter{ResponseWriter: w, status: 200}
 	bucket, key := s.target(r)

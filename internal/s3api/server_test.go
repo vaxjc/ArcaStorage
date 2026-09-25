@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"storage/internal/auth"
-	"storage/internal/store"
+	"arca/internal/auth"
+	"arca/internal/store"
 )
 
 func TestObjectRoundTrip(t *testing.T) {

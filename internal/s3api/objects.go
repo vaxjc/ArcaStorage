@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"storage/internal/auth"
-	"storage/internal/store"
+	"arca/internal/auth"
+	"arca/internal/store"
 )
 
 var errPrecondition = errors.New("precondition failed")

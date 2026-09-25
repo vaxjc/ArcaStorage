@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"storage/internal/auth"
-	"storage/internal/store"
+	"arca/internal/auth"
+	"arca/internal/store"
 )
 
 func (s *Server) routeCORS(w http.ResponseWriter, r *http.Request, ar *auth.Result, bucket string) {

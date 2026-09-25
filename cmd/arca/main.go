@@ -18,21 +18,46 @@ import (
 	"syscall"
 	"time"
 
-	"storage/internal/s3api"
-	"storage/internal/store"
+	"arca/internal/s3api"
+	"arca/internal/store"
 )
 
 func main() {
-	addr := flag.String("addr", listenAddr(), "dirección de escucha")
-	data := flag.String("data", env("STORAGE_DATA", "data"), "directorio de datos")
-	region := flag.String("region", env("STORAGE_REGION", "us-east-1"), "región que ven los clientes")
-	access := flag.String("access-key", os.Getenv("STORAGE_ACCESS_KEY"), "access key (si se omite, se carga o se crea en el directorio de datos)")
-	secret := flag.String("secret-key", os.Getenv("STORAGE_SECRET_KEY"), "secret key")
-	publicURL := flag.String("public-url", env("STORAGE_PUBLIC_URL", "http://localhost:9000"), "URL que usan los clientes")
-	tlsCert := flag.String("tls-cert", os.Getenv("STORAGE_TLS_CERT"), "certificado TLS")
-	tlsKey := flag.String("tls-key", os.Getenv("STORAGE_TLS_KEY"), "llave TLS")
+	addr := flag.String("addr", "", "dirección de escucha")
+	data := flag.String("data", "", "directorio de datos")
+	region := flag.String("region", "", "región que ven los clientes")
+	access := flag.String("access-key", "", "access key")
+	secret := flag.String("secret-key", "", "secret key")
+	publicURL := flag.String("public-url", "", "URL que usan los clientes")
+	tlsCert := flag.String("tls-cert", "", "certificado TLS")
+	tlsKey := flag.String("tls-key", "", "llave TLS")
 	maxObject := flag.Int64("max-object-bytes", 8<<30, "tamaño máximo de un objeto")
 	flag.Parse()
+
+	if *addr == "" {
+		*addr = listenAddr()
+	}
+	if *data == "" {
+		*data = env("ARCA_DATA", "data")
+	}
+	if *region == "" {
+		*region = env("ARCA_REGION", "us-east-1")
+	}
+	if *access == "" {
+		*access = env("ARCA_ACCESS_KEY", "")
+	}
+	if *secret == "" {
+		*secret = env("ARCA_SECRET_KEY", "")
+	}
+	if *publicURL == "" {
+		*publicURL = env("ARCA_PUBLIC_URL", "http://localhost:9000")
+	}
+	if *tlsCert == "" {
+		*tlsCert = env("ARCA_TLS_CERT", "")
+	}
+	if *tlsKey == "" {
+		*tlsKey = env("ARCA_TLS_KEY", "")
+	}
 
 	accessKey, secretKey, generated, err := loadKeys(*data, *access, *secret)
 	if err != nil {
@@ -71,7 +96,7 @@ func main() {
 		}
 	}()
 
-	fmt.Printf("storage listo\n")
+	fmt.Printf("arca listo\n")
 	fmt.Printf("  endpoint    %s\n", strings.TrimRight(*publicURL, "/"))
 	fmt.Printf("  escuchando  %s\n", *addr)
 	fmt.Printf("  region      %s\n", *region)
@@ -147,7 +172,7 @@ func newKeys() (string, string, error) {
 	if _, err := rand.Read(buf); err != nil {
 		return "", "", err
 	}
-	return "ST" + access, base64.RawURLEncoding.EncodeToString(buf), nil
+	return "ARCA" + access, base64.RawURLEncoding.EncodeToString(buf), nil
 }
 
 func randAlphabet(n int) (string, error) {
@@ -188,10 +213,8 @@ func baseHosts(addr, publicURL string) []string {
 	return out
 }
 
-// listenAddr uses STORAGE_ADDR when set. Otherwise PORT (Easypanel and other
-// panels) binds every interface. A local run without either stays on localhost.
 func listenAddr() string {
-	if v := os.Getenv("STORAGE_ADDR"); v != "" {
+	if v := env("ARCA_ADDR", ""); v != "" {
 		return v
 	}
 	if p := os.Getenv("PORT"); p != "" {
@@ -206,6 +229,11 @@ func listenAddr() string {
 func env(key, fallback string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
+	}
+	if strings.HasPrefix(key, "ARCA_") {
+		if v := os.Getenv("STORAGE_" + strings.TrimPrefix(key, "ARCA_")); v != "" {
+			return v
+		}
 	}
 	return fallback
 }

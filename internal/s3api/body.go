@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"strings"
 
-	"storage/internal/auth"
+	"arca/internal/auth"
 )
 
 var (
