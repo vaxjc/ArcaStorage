@@ -6,6 +6,8 @@ services:
     environment:
       ARCA_PUBLIC_URL: ${ARCA_PUBLIC_URL:-http://localhost:9000}
       ARCA_REGION: ${ARCA_REGION:-us-east-1}
+      ARCA_ACCESS_KEY: ${ARCA_ACCESS_KEY}
+      ARCA_SECRET_KEY: ${ARCA_SECRET_KEY}
     volumes:
       - arca-data:/data
 
